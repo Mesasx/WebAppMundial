@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(34, 224, 122, 0.12), transparent 60%),
+    radial-gradient(900px 500px at 0% 0%, rgba(74, 168, 255, 0.08), transparent 55%),
+    #0a0e14;
+  color: #e8edf2;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: #27313f;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer components {
+  .card {
+    @apply bg-ink-800/80 border border-ink-600/60 rounded-2xl backdrop-blur;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-primary {
+    @apply btn bg-pitch-500 text-ink-900 hover:bg-pitch-400;
+  }
+  .btn-ghost {
+    @apply btn bg-ink-700/70 text-white hover:bg-ink-600;
+  }
+  .btn-danger {
+    @apply btn bg-accent-danger/90 text-white hover:bg-accent-danger;
+  }
+  .input {
+    @apply w-full rounded-xl bg-ink-900/70 border border-ink-600 px-4 py-2.5 text-white outline-none focus:border-pitch-500 transition;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
+  }
+  .pitch-bg {
+    background:
+      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 8%, transparent 8% 16%),
+      linear-gradient(180deg, #0b5d2e, #0a4d27);
+  }
+}
+
+.field-stripes {
+  background:
+    repeating-linear-gradient(90deg, #0d6b35 0 9.09%, #0a5c2d 9.09% 18.18%);
+}

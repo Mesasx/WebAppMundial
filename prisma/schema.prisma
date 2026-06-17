@@ -1,0 +1,56 @@
+// Modo Manager Mundial — esquema de base de datos
+//
+// Decisión de arquitectura:
+//   - Las entidades de autenticación (User) y de metadatos de partida (Career)
+//     se modelan de forma relacional.
+//   - El estado profundo de cada carrera (selección, plantilla, jugadores,
+//     partidos, eventos, noticias, conversaciones, promesas, química, moral,
+//     estadísticas del torneo, eliminatorias...) se persiste como un blob JSON
+//     tipado dentro de `Career.state`.
+//
+//   Esto da un sistema de guardado robusto y portable (funciona igual en
+//   SQLite/Postgres), evita docenas de tablas para un MVP y mantiene la lógica
+//   de juego desacoplada de la base de datos. Los tipos viven en
+//   `src/lib/types.ts` y el motor opera sobre el objeto `CareerState`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  displayName  String
+  createdAt    DateTime @default(now())
+
+  careers Career[]
+}
+
+model Career {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Metadatos rápidos para listar "Mis carreras" sin parsear todo el estado.
+  nationName String
+  baseCountry String
+  difficulty String   // easy | normal | hard | realistic | chaos
+  phase      String   // intro | create | draft | recruitment | tournament | finished
+  stageLabel String   // etiqueta legible de la fase actual
+  finished   Boolean  @default(false)
+  result     String?  // resumen del resultado final (campeón, semis, etc.)
+
+  // Estado completo del juego (CareerState serializado).
+  state     String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
