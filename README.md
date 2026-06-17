@@ -17,26 +17,37 @@ Mezcla de modo carrera, simulador de Mundial, juego de draft y narrativa interac
 
 ## 🚀 Cómo ejecutar en local
 
-Requisitos: **Node 18+** (probado con Node 22).
+Requisitos: **Node 18+** (probado con Node 22) y un **PostgreSQL**. La forma más rápida de
+tener Postgres en local es con Docker (incluido `docker-compose.yml`).
 
 ```bash
 # 1. Instalar dependencias (genera el cliente Prisma automáticamente)
 npm install
 
-# 2. Configurar entorno (SQLite, listo para usar)
+# 2. Configurar entorno (apunta a Postgres; ver .env.example)
 cp .env.example .env
 
-# 3. Crear la base de datos
+# 3. Levantar Postgres en local (o usa tu propia instancia / un Neon gratis)
+docker compose up -d
+
+# 4. Crear las tablas
 npm run db:push
 
-# 4. (Opcional) crear una cuenta demo  ->  demo@mundial.com / demo1234
+# 5. (Opcional) crear una cuenta demo  ->  demo@mundial.com / demo1234
 npm run db:seed
 
-# 5. Arrancar en desarrollo
+# 6. Arrancar en desarrollo
 npm run dev
 ```
 
 Abre **http://localhost:3000**.
+
+> ¿Sin Docker? Crea una base de datos gratis en [Neon](https://neon.tech) y pega su
+> connection string en `DATABASE_URL` y `DIRECT_URL` del `.env`.
+
+### ☁️ Desplegar en Vercel
+
+Sigue la guía paso a paso en **[DEPLOY.md](./DEPLOY.md)** (Vercel + Vercel Postgres/Neon).
 
 Otros scripts:
 
@@ -55,7 +66,7 @@ npm run db:reset   # recrear la BD desde cero + seed
 |------|-----------|---------|
 | Framework | **Next.js 14 (App Router)** + React 18 + TypeScript | Full-stack en un solo proyecto, fácil de desplegar (Vercel/Node) |
 | Estilos | **Tailwind CSS** | UI rápida, responsive, tema oscuro futbolero |
-| Base de datos | **Prisma + SQLite** | Cero configuración, portable a Postgres cambiando el `datasource` |
+| Base de datos | **Prisma + PostgreSQL** | Estándar y listo para serverless/Vercel (Vercel Postgres, Neon, Supabase…) |
 | Auth | **bcryptjs + JWT (jose)** en cookie httpOnly | Sesión segura sin dependencias pesadas |
 | Validación | **Zod** | Validación de formularios y de la API |
 | Tests | **Vitest** | Motor de juego testeable y desacoplado |
@@ -162,7 +173,7 @@ La arquitectura deja enganches claros para crecer:
   el motor ya soporta sesgo táctico/actitud; falta el bucle interactivo de subs.
 - **Mercado dinámico más profundo**, rivalidades, ruedas de prensa ampliadas, más estadísticas
   globales y modos de carrera adicionales.
-- Cambiar a **Postgres** sólo requiere editar el `datasource` de Prisma.
+- **Despliegue**: listo para Vercel con Postgres gestionado (ver `DEPLOY.md`).
 
 ---
 
