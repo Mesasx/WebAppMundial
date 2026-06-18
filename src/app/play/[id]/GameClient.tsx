@@ -63,7 +63,7 @@ function TopBar({ state }: { state: CareerState }) {
     <header className="sticky top-0 z-30 border-b border-ink-600/60 bg-ink-900/80 backdrop-blur">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
-          <Link href="/careers" className="text-slate-400 hover:text-white shrink-0">←</Link>
+          <Link href="/careers" className="text-slate-400 hover:text-pitch-600 shrink-0">←</Link>
           <span className="text-2xl shrink-0">{user.flag}</span>
           <div className="min-w-0">
             <div className="font-bold truncate">{user.name}</div>

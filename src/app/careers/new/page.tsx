@@ -38,7 +38,7 @@ export default function NewCareerPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
-      <Link href="/careers" className="text-sm text-slate-400 hover:text-white">← Mis carreras</Link>
+      <Link href="/careers" className="text-sm text-slate-400 hover:text-pitch-600">← Mis carreras</Link>
       <h1 className="text-3xl font-black mt-3 mb-1">Crea tu selección</h1>
       <p className="text-slate-400 mb-6">En este universo, tu selección nace de cero. Elige una base y ponle el nombre que quieras.</p>
 

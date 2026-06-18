@@ -87,7 +87,7 @@ export function Match({ state, act, busy }: GameProps) {
           <label className="text-xs text-slate-400">Formación</label>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {ALL_FORMATIONS.map((f) => (
-              <button key={f} onClick={() => setFormation(f)} className={`chip ${formation === f ? "bg-pitch-500 text-ink-900" : "bg-ink-700 text-slate-300"}`}>{f}</button>
+              <button key={f} onClick={() => setFormation(f)} className={`chip ${formation === f ? "bg-pitch-500 text-white" : "bg-ink-700 text-slate-300"}`}>{f}</button>
             ))}
           </div>
           <p className="text-[11px] text-slate-500 mt-1">{FORMATION_LABELS[formation]}</p>
@@ -96,7 +96,7 @@ export function Match({ state, act, busy }: GameProps) {
           <label className="text-xs text-slate-400">Estilo</label>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {(Object.keys(PLAYSTYLE_LABELS) as Playstyle[]).map((s) => (
-              <button key={s} onClick={() => setPlaystyle(s)} className={`chip ${playstyle === s ? "bg-pitch-500 text-ink-900" : "bg-ink-700 text-slate-300"}`}>{PLAYSTYLE_LABELS[s]}</button>
+              <button key={s} onClick={() => setPlaystyle(s)} className={`chip ${playstyle === s ? "bg-pitch-500 text-white" : "bg-ink-700 text-slate-300"}`}>{PLAYSTYLE_LABELS[s]}</button>
             ))}
           </div>
         </div>
@@ -104,7 +104,7 @@ export function Match({ state, act, busy }: GameProps) {
           <label className="text-xs text-slate-400">Actitud</label>
           <div className="flex flex-wrap gap-1.5 mt-1">
             {AGGRESSION.map((a) => (
-              <button key={a.v} onClick={() => setAggression(a.v)} className={`chip ${aggression === a.v ? "bg-accent-amber text-ink-900" : "bg-ink-700 text-slate-300"}`}>{a.label}</button>
+              <button key={a.v} onClick={() => setAggression(a.v)} className={`chip ${aggression === a.v ? "bg-accent-amber text-white" : "bg-ink-700 text-slate-300"}`}>{a.label}</button>
             ))}
           </div>
         </div>

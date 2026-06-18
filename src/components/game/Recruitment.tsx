@@ -32,7 +32,7 @@ export function Recruitment({ state, act, busy }: GameProps) {
       <div className="flex flex-wrap items-end justify-between gap-3 mb-4">
         <div>
           <h1 className="text-2xl font-black">💬 Reclutamiento</h1>
-          <p className="text-slate-400 text-sm">Convence a agentes libres antes del cierre de listas. Plantilla: <b className="text-white">{user.squad.length}/26</b></p>
+          <p className="text-slate-400 text-sm">Convence a agentes libres antes del cierre de listas. Plantilla: <b className="text-pitch-600">{user.squad.length}/26</b></p>
         </div>
         <div className="flex items-center gap-2">
           <span className="chip bg-accent-amber/20 text-accent-amber">⏳ {daysLeft} días para el cierre</span>
@@ -104,7 +104,7 @@ function ChatPanel({ player, conv, act, busy }: { player: Player; conv: any; act
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-3 py-2 space-y-2">
         {conv.messages.map((m: any, i: number) => (
           <div key={i} className={`flex ${m.from === "manager" ? "justify-end" : "justify-start"}`}>
-            <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.from === "manager" ? "bg-pitch-500 text-ink-900" : "bg-ink-700 text-slate-100"}`}>
+            <div className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${m.from === "manager" ? "bg-pitch-500 text-white" : "bg-ink-700 text-slate-100"}`}>
               {m.text}
             </div>
           </div>

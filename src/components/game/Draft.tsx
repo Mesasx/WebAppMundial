@@ -16,8 +16,8 @@ export function Draft({ state, act, busy }: GameProps) {
         <h1 className="text-2xl font-black">🎰 El Draft de la Reconstrucción</h1>
         <p className="text-slate-400 text-sm max-w-2xl">
           Con las nacionalidades reiniciadas, solo puedes asegurar dos grandes fichajes. Elige
-          <b className="text-white"> tu capitán</b> entre 3 cracks (media ≥90) y una
-          <b className="text-white"> estrella</b> (≥85). El resto de la plantilla (hasta 26) la
+          <b className="text-pitch-600"> tu capitán</b> entre 3 cracks (media ≥90) y una
+          <b className="text-pitch-600"> estrella</b> (≥85). El resto de la plantilla (hasta 26) la
           completarán jugadores de media 67-84. Elige con cabeza: marcarán tu proyecto.
         </p>
       </div>

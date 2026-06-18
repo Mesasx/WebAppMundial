@@ -45,7 +45,7 @@ export function Toast({ msg, onClose }: { msg: string; onClose: () => void }) {
     <div className="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 animate-pop">
       <div className="card px-5 py-3 shadow-xl border-pitch-500/40 flex items-center gap-3 max-w-md">
         <span className="text-sm">{msg}</span>
-        <button onClick={onClose} className="text-slate-400 hover:text-white text-lg leading-none">×</button>
+        <button onClick={onClose} className="text-slate-400 hover:text-pitch-600 text-lg leading-none">×</button>
       </div>
     </div>
   );
