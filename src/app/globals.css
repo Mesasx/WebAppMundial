@@ -11,12 +11,13 @@ body {
   padding: 0;
   margin: 0;
   background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(34, 224, 122, 0.12), transparent 60%),
-    radial-gradient(900px 500px at 0% 0%, rgba(74, 168, 255, 0.08), transparent 55%),
-    #0a0e14;
-  color: #e8edf2;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    radial-gradient(1100px 600px at 82% -8%, rgba(217, 119, 87, 0.16), transparent 60%),
+    radial-gradient(900px 520px at -5% 5%, rgba(227, 171, 94, 0.08), transparent 55%),
+    #1a1916;
+  color: #efe9dd;
+  font-family: var(--font-body), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -28,48 +29,62 @@ a {
   text-decoration: none;
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: -0.01em;
+}
+
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27313f;
+  background: #3d3933;
   border-radius: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 
+::selection {
+  background: rgba(217, 119, 87, 0.35);
+}
+
 @layer components {
   .card {
-    @apply bg-ink-800/80 border border-ink-600/60 rounded-2xl backdrop-blur;
+    @apply bg-ink-800/80 border border-ink-600/50 rounded-2xl backdrop-blur;
   }
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-semibold transition active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-pitch-500 text-ink-900 hover:bg-pitch-400;
+    @apply btn bg-pitch-500 text-ink-900 hover:bg-pitch-400 shadow-lg shadow-pitch-500/20;
   }
   .btn-ghost {
-    @apply btn bg-ink-700/70 text-white hover:bg-ink-600;
+    @apply btn bg-ink-700/70 text-accent-cream hover:bg-ink-600 border border-ink-600/60;
   }
   .btn-danger {
     @apply btn bg-accent-danger/90 text-white hover:bg-accent-danger;
   }
   .input {
-    @apply w-full rounded-xl bg-ink-900/70 border border-ink-600 px-4 py-2.5 text-white outline-none focus:border-pitch-500 transition;
+    @apply w-full rounded-xl bg-ink-900/70 border border-ink-600 px-4 py-2.5 text-accent-cream outline-none focus:border-pitch-500 transition placeholder:text-ink-500;
   }
   .chip {
     @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
-  .pitch-bg {
-    background:
-      repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0 8%, transparent 8% 16%),
-      linear-gradient(180deg, #0b5d2e, #0a4d27);
-  }
 }
 
+/* Césped del campo en la simulación 2D (siempre verde, es la hierba). */
 .field-stripes {
-  background:
-    repeating-linear-gradient(90deg, #0d6b35 0 9.09%, #0a5c2d 9.09% 18.18%);
+  background: repeating-linear-gradient(90deg, #1f6b3a 0 9.09%, #1b5e33 9.09% 18.18%);
+}
+
+/* Texto con degradado coral para titulares destacados. */
+.text-gradient {
+  background: linear-gradient(100deg, #f0a888, #d97757 55%, #e3ab5e);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

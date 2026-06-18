@@ -9,25 +9,8 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
 
-    # Postgres efímero para validar el build (incluye `prisma db push`).
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: mundial
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/mundial?schema=public
-      DIRECT_URL: postgresql://postgres:postgres@localhost:5432/mundial?schema=public
+      DATABASE_URL: file:./ci.db
       AUTH_SECRET: ci-secret-not-used-in-production
 
     steps:
@@ -41,8 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Create database schema
+        run: npm run db:push
+
       - name: Run engine tests
         run: npm test
 
-      - name: Build (genera cliente, crea tablas y compila)
+      - name: Build
         run: npm run build
