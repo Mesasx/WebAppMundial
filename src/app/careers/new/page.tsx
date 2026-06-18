@@ -3,8 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { post } from "@/lib/client";
-import { NATIONS } from "@/data/nations";
+import { realNationOptions } from "@/data/countries";
 import { DIFFICULTY_INFO, NATION_NAME_IDEAS } from "@/lib/narrative";
+
+const NATIONS = realNationOptions();
 
 export default function NewCareerPage() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function NewCareerPage() {
       const { id } = await post<{ id: string }>("/api/careers", {
         nationName: effectiveName,
         baseCountry,
+        flag: baseNation?.flag ?? "🏳️",
         difficulty,
       });
       router.push(`/play/${id}`);

@@ -3,7 +3,8 @@
 
 import type { CareerState, Formation, Player, Playstyle } from "./types";
 import { FORMATIONS } from "./engine/formations";
-import { autoLineup, validateManualPicks, MANUAL_PICKS } from "./engine/draft";
+import { autoLineup } from "./engine/draft";
+import { defect } from "./engine/realdata";
 import {
   advanceFromIntro,
   advanceRecruitmentDay,
@@ -24,8 +25,8 @@ import { applyTraining, TrainingType } from "./engine/training";
 
 export type Action =
   | { type: "advanceIntro" }
-  | { type: "draftPick"; playerId: string }
-  | { type: "draftRemove"; playerId: string }
+  | { type: "draftPickCaptain"; playerId: string }
+  | { type: "draftPickStar"; playerId: string }
   | { type: "finalizeDraft" }
   | { type: "startConversation"; playerId: string }
   | { type: "sendApproach"; playerId: string; approach: ApproachType; text?: string }
@@ -60,29 +61,23 @@ export function applyAction(state: CareerState, action: Action): ActionResult {
       advanceFromIntro(state);
       return { message: "¡Comienza el draft inicial!" };
 
-    case "draftPick": {
+    case "draftPickCaptain": {
       if (state.phase !== "draft") return { message: "El draft ya está cerrado." };
-      const picks = state.draftPicks ?? [];
-      if (picks.includes(action.playerId)) return { message: "Ya elegiste a ese jugador." };
-      if (picks.length >= MANUAL_PICKS) return { message: `Solo puedes elegir ${MANUAL_PICKS} jugadores.` };
-      const candidate = picks.map((id) => state.players[id]);
-      candidate.push(state.players[action.playerId]);
-      const v = validateManualPicks(candidate.filter(Boolean) as Player[]);
-      if (!v.ok) return { message: v.reason };
-      state.draftPicks = [...picks, action.playerId];
-      state.draftPicksNeeded = MANUAL_PICKS - state.draftPicks.length;
+      if (!(state.draftCaptainOptions ?? []).includes(action.playerId)) return { message: "Opción de capitán no válida." };
+      state.draftCaptainPick = action.playerId;
       return {};
     }
 
-    case "draftRemove": {
-      if (state.phase !== "draft") return {};
-      state.draftPicks = (state.draftPicks ?? []).filter((id) => id !== action.playerId);
-      state.draftPicksNeeded = MANUAL_PICKS - state.draftPicks.length;
+    case "draftPickStar": {
+      if (state.phase !== "draft") return { message: "El draft ya está cerrado." };
+      if (!(state.draftStarOptions ?? []).includes(action.playerId)) return { message: "Opción de estrella no válida." };
+      state.draftStarPick = action.playerId;
       return {};
     }
 
     case "finalizeDraft": {
       if (state.phase !== "draft") return { message: "Fase incorrecta." };
+      if (!state.draftCaptainPick || !state.draftStarPick) return { message: "Elige tu capitán y tu estrella antes de continuar." };
       finalizeDraft(state);
       return { message: "Plantilla creada. ¡A reclutar más jugadores!" };
     }
@@ -107,7 +102,9 @@ export function applyAction(state: CareerState, action: Action): ActionResult {
       if (out.promise) state.promises.push(out.promise);
       if (out.recruited) {
         const player = state.players[action.playerId];
-        // añade a la plantilla; si está llena (26), sustituye al peor que no sea titular
+        // el jugador "defecciona" de su selección real y se une a la tuya
+        defect({ teams: state.teams, players: state.players }, player.id);
+        // si está llena (26), sustituye al peor que no sea titular
         if (user.squad.length >= 26) {
           const worst = [...user.squad]
             .map((id) => state.players[id])

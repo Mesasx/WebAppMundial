@@ -4,7 +4,6 @@
 // y epílogo, operando siempre sobre un objeto CareerState (serializable a JSON).
 // ============================================================================
 
-import { NATIONS, COACH_FIRST, COACH_LAST, PLAYSTYLES_POOL } from "@/data/nations";
 import type {
   CareerState,
   Difficulty,
@@ -15,9 +14,9 @@ import type {
   Playstyle,
   Team,
 } from "../types";
-import { proceduralPlayer } from "./factory";
 import { FORMATIONS } from "./formations";
-import { autoCompleteSquad, autoLineup, initDraft, SQUAD_SIZE } from "./draft";
+import { assembleFillers, autoLineup, initDraft } from "./draft";
+import { buildRealWorld, defect } from "./realdata";
 import { simulateMatch, MatchOptions } from "./match";
 import { recomputeChemistry, teamRating } from "./team";
 import { addNews, dailyFlavorNews, injuryNews, matchNews } from "./news";
@@ -32,85 +31,10 @@ import {
   propagateKnockout,
   roundLabel,
 } from "./tournament";
-import { makeRng, pick, RNG, shuffle, uid } from "./rng";
+import { makeRng, RNG, uid } from "./rng";
 
 const KICKOFF_DAY = 0;
 const RECRUITMENT_START = -14;
-
-// Posiciones base para construir una plantilla rival mínima por puesto.
-const SQUAD_TEMPLATE = [
-  "POR", "POR", "LD", "LD", "DFC", "DFC", "DFC", "LI", "LI",
-  "MCD", "MCD", "MC", "MC", "MCO", "MCO", "ED", "ED", "EI", "EI",
-  "DC", "DC", "SD", "MC", "DFC", "DC", "EI",
-] as const;
-
-function buildRivalTeam(
-  nationName: string,
-  flag: string,
-  baseStrength: number,
-  difficulty: Difficulty,
-  players: Record<string, Player>,
-  rng: RNG,
-): Team {
-  const id = uid("team");
-  const squad: string[] = [];
-
-  // tier objetivo según fuerza de la nación
-  const tierFor = (i: number): number => {
-    if (i < 2 && baseStrength >= 85) return 5; // 1-2 cracks en los mejores
-    if (i < 1 && baseStrength >= 78) return 4;
-    if (baseStrength >= 80) return i < 6 ? 4 : 3;
-    if (baseStrength >= 72) return i < 4 ? 3 : 2;
-    return i < 3 ? 3 : 2;
-  };
-
-  SQUAD_TEMPLATE.forEach((pos, i) => {
-    const p = proceduralPlayer(pos, tierFor(i), nationName, flag, rng);
-    players[p.id] = p;
-    squad.push(p.id);
-  });
-
-  const formation = pick<Formation>(rng, ["4-3-3", "4-2-3-1", "4-4-2", "3-5-2", "5-3-2"]);
-  const playstyle = pick<Playstyle>(rng, [...PLAYSTYLES_POOL]);
-  const team: Team = {
-    id,
-    name: nationName,
-    baseCountry: nationName,
-    flag,
-    isUser: false,
-    coachName: `${pick(rng, COACH_FIRST)} ${pick(rng, COACH_LAST)}`,
-    playstyle,
-    formation,
-    squad,
-    lineup: [],
-    captainId: null,
-    penaltyTakerId: null,
-    freekickTakerId: null,
-    cornerTakerId: null,
-    chemistry: Math.round(50 + rng() * 25),
-    rating: 0,
-    points: 0, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0,
-    eliminated: false,
-  };
-  team.lineup = autoLineup(squad.map((s) => players[s]), FORMATIONS[formation]);
-  setDefaultRoles(team, players);
-  team.rating = teamRating(team, players);
-  team.chemistry = recomputeChemistry(team, players);
-  return team;
-}
-
-function setDefaultRoles(team: Team, players: Record<string, Player>) {
-  const squad = team.squad.map((id) => players[id]).filter(Boolean) as Player[];
-  if (squad.length === 0) return;
-  const byPrestige = [...squad].sort((a, b) => b.prestige + b.overall - (a.prestige + a.overall));
-  team.captainId = byPrestige[0]?.id ?? null;
-  const finishers = [...squad].sort(
-    (a, b) => (b.attributes.sangreFria ?? b.overall) - (a.attributes.sangreFria ?? a.overall),
-  );
-  team.penaltyTakerId = finishers[0]?.id ?? null;
-  team.freekickTakerId = finishers[0]?.id ?? null;
-  team.cornerTakerId = finishers[1]?.id ?? finishers[0]?.id ?? null;
-}
 
 export interface CreateCareerOptions {
   nationName: string;
@@ -123,14 +47,25 @@ export interface CreateCareerOptions {
 export function createCareerState(opts: CreateCareerOptions): CareerState {
   const seed = opts.seed ?? Math.floor(Math.random() * 2 ** 31);
   const rng = makeRng(seed);
-  const players: Record<string, Player> = {};
-  const teams: Record<string, Team> = {};
 
-  // 47 rivales (la 48ª plaza es el usuario). Excluimos la nación base si coincide.
-  const rivalNations = shuffle(rng, NATIONS).filter((n) => n.name !== opts.baseCountry).slice(0, 47);
-  for (const n of rivalNations) {
-    const t = buildRivalTeam(n.name, n.flag, n.strength, opts.difficulty, players, rng);
-    teams[t.id] = t;
+  // Construye las 48 selecciones reales y elimina la nación base elegida por el
+  // usuario (su plaza la ocupará la selección reconstruida). Sus jugadores
+  // quedan disponibles para el draft/reclutamiento (defección).
+  const world = buildRealWorld(rng);
+  const players = world.players;
+  const teams = world.teams;
+  const baseTeam = Object.values(teams).find((t) => t.name === opts.baseCountry);
+  if (baseTeam) {
+    delete teams[baseTeam.id];
+    for (const id of baseTeam.squad) {
+      if (players[id]) players[id].originTeamId = undefined; // ya no tienen selección
+    }
+  }
+  // Si por lo que sea hay más de 47 rivales, recortamos a 47 (los de menor media).
+  let rivalIds = Object.values(teams).filter((t) => !t.isUser);
+  if (rivalIds.length > 47) {
+    rivalIds.sort((a, b) => a.rating - b.rating);
+    for (const t of rivalIds.slice(0, rivalIds.length - 47)) delete teams[t.id];
   }
 
   // Equipo del usuario (plantilla vacía hasta el draft).
@@ -201,30 +136,48 @@ export function advanceFromIntro(state: CareerState) {
 export function finalizeDraft(state: CareerState, seed?: number) {
   const rng = makeRng(seed ?? Date.now() % 2 ** 31);
   const user = state.teams[state.userTeamId];
-  const picks = (state.draftPicks ?? []).map((id) => state.players[id]).filter(Boolean) as Player[];
-  const pool = (state.draftPool ?? []).map((id) => state.players[id]).filter(Boolean) as Player[];
 
-  const full = autoCompleteSquad(picks, pool, user.baseCountry, user.flag, rng);
-  // Asegura que los jugadores estén en el mapa global.
-  for (const p of full) state.players[p.id] = p;
+  const captain = state.draftCaptainPick ? state.players[state.draftCaptainPick] : undefined;
+  const star = state.draftStarPick ? state.players[state.draftStarPick] : undefined;
+  const base: Player[] = [captain, star].filter(Boolean) as Player[];
+  // defección de capitán y estrella
+  for (const p of base) defect({ teams: state.teams, players: state.players }, p.id);
+
+  const full = assembleFillers(state, base, rng, (id) =>
+    defect({ teams: state.teams, players: state.players }, id),
+  );
+
   user.squad = full.map((p) => p.id);
+  user.formation = "4-3-3";
   user.lineup = autoLineup(full, FORMATIONS[user.formation]);
-  setDefaultRoles(user, state.players);
+  user.captainId = captain?.id ?? full[0]?.id ?? null;
+  setRolesKeepCaptain(user, state.players);
   user.rating = teamRating(user, state.players);
   user.chemistry = recomputeChemistry(user, state.players);
 
-  // Los jugadores de la pool no fichados se convierten en agentes libres
-  // convencibles durante el reclutamiento.
-  const keep = new Set(user.squad);
-  const freeAgents = (state.draftPool ?? []).filter((id) => !keep.has(id) && state.players[id]);
-  state.freeAgents = freeAgents;
-  state.draftPool = undefined;
-  state.draftPicks = undefined;
-  state.draftPicksNeeded = undefined;
+  // Agentes libres para el reclutamiento: una muestra de jugadores 80-86 que
+  // aún siguen en selecciones rivales (se les puede convencer -> defección).
+  const pool = Object.values(state.players)
+    .filter((p) => p.originTeamId && p.overall >= 78 && p.overall <= 87)
+    .sort(() => rng() - 0.5)
+    .slice(0, 28);
+  state.freeAgents = pool.map((p) => p.id);
+
+  state.draftCaptainOptions = undefined;
+  state.draftStarOptions = undefined;
 
   state.phase = "recruitment";
   setObjective(state);
-  addNews(state, "torneo", "Plantilla provisional cerrada", `${user.name} completa su draft inicial (26 jugadores). Quedan dos semanas para convencer a más futbolistas antes del cierre de listas.`, "good");
+  addNews(state, "torneo", "Plantilla provisional cerrada", `${user.name} cierra su draft con ${captain?.name ?? "su capitán"} al frente. Quedan dos semanas para convencer a más futbolistas antes del cierre de listas.`, "good");
+}
+
+// Fija lanzadores sin pisar el capitán ya elegido.
+function setRolesKeepCaptain(team: Team, players: Record<string, Player>) {
+  const squad = team.squad.map((id) => players[id]).filter(Boolean) as Player[];
+  const fin = [...squad].sort((a, b) => (b.attributes.sangreFria ?? b.overall) - (a.attributes.sangreFria ?? a.overall));
+  team.penaltyTakerId = fin[0]?.id ?? null;
+  team.freekickTakerId = fin[0]?.id ?? null;
+  team.cornerTakerId = fin[1]?.id ?? fin[0]?.id ?? null;
 }
 
 // --------------------------------------------------------------------------
@@ -264,10 +217,7 @@ export function closeRecruitment(state: CareerState, rng?: RNG) {
   // recalcular rating/química del usuario
   const user = state.teams[state.userTeamId];
 
-  // Limpia agentes libres no fichados para no inflar el estado guardado.
-  for (const id of state.freeAgents ?? []) {
-    if (!user.squad.includes(id)) delete state.players[id];
-  }
+  // Los agentes libres no fichados siguen en sus selecciones (no se borran).
   state.freeAgents = undefined;
   state.conversations = state.conversations.filter((c) => c.status === "recruited");
   user.rating = teamRating(user, state.players);
