@@ -17,7 +17,8 @@ Mezcla de modo carrera, simulador de Mundial, juego de draft y narrativa interac
 
 ## 🚀 Cómo ejecutar en local
 
-Requisitos: **Node 18+** (probado con Node 22).
+Requisitos: **Node 18+** (probado con Node 22). La base de datos es **SQLite**, así que no
+necesitas instalar ni configurar nada externo.
 
 ```bash
 # 1. Instalar dependencias (genera el cliente Prisma automáticamente)
@@ -53,9 +54,9 @@ npm run db:reset   # recrear la BD desde cero + seed
 
 | Capa | Tecnología | Por qué |
 |------|-----------|---------|
-| Framework | **Next.js 14 (App Router)** + React 18 + TypeScript | Full-stack en un solo proyecto, fácil de desplegar (Vercel/Node) |
-| Estilos | **Tailwind CSS** | UI rápida, responsive, tema oscuro futbolero |
-| Base de datos | **Prisma + SQLite** | Cero configuración, portable a Postgres cambiando el `datasource` |
+| Framework | **Next.js 14 (App Router)** + React 18 + TypeScript | Full-stack en un solo proyecto |
+| Estilos | **Tailwind CSS** + tipografía serif/sans | Identidad cálida estilo Claude, responsive |
+| Base de datos | **Prisma + SQLite** | Cero configuración; portable a Postgres cambiando el `datasource` |
 | Auth | **bcryptjs + JWT (jose)** en cookie httpOnly | Sesión segura sin dependencias pesadas |
 | Validación | **Zod** | Validación de formularios y de la API |
 | Tests | **Vitest** | Motor de juego testeable y desacoplado |
@@ -162,7 +163,7 @@ La arquitectura deja enganches claros para crecer:
   el motor ya soporta sesgo táctico/actitud; falta el bucle interactivo de subs.
 - **Mercado dinámico más profundo**, rivalidades, ruedas de prensa ampliadas, más estadísticas
   globales y modos de carrera adicionales.
-- Cambiar a **Postgres** sólo requiere editar el `datasource` de Prisma.
+- **Despliegue**: para producción basta con cambiar el `datasource` de Prisma a Postgres.
 
 ---
 

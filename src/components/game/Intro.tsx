@@ -9,11 +9,14 @@ export function Intro({ act, busy }: GameProps) {
   const last = i === INTRO_SLIDES.length - 1;
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-10 sm:py-16">
+    <main className="relative max-w-2xl mx-auto px-4 py-10 sm:py-16 overflow-hidden">
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute top-10 right-0 h-72 w-72 rounded-full bg-pitch-500/15 blur-3xl animate-glow" />
+      </div>
       <div className="card p-8 sm:p-12 text-center min-h-[60vh] flex flex-col justify-center animate-fade-in" key={i}>
-        <div className="text-7xl mb-6">{slide.emoji}</div>
-        <h1 className="text-3xl font-black mb-4">{slide.title}</h1>
-        <p className="text-lg text-slate-300 leading-relaxed">{slide.text}</p>
+        <div className="text-7xl mb-6 animate-float">{slide.emoji}</div>
+        <h1 className="text-3xl sm:text-4xl font-semibold mb-4">{slide.title}</h1>
+        <p className="text-lg text-accent-cream/75 leading-relaxed">{slide.text}</p>
       </div>
 
       <div className="flex items-center justify-between mt-6">
