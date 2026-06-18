@@ -12,8 +12,10 @@ export function projectState(state: CareerState): ProjectedState {
   const keep = new Set<string>();
   const user = state.teams[state.userTeamId];
   if (user) user.squad.forEach((id) => keep.add(id));
-  (state.draftPool ?? []).forEach((id) => keep.add(id));
-  (state.draftPicks ?? []).forEach((id) => keep.add(id));
+  (state.draftCaptainOptions ?? []).forEach((id) => keep.add(id));
+  (state.draftStarOptions ?? []).forEach((id) => keep.add(id));
+  if (state.draftCaptainPick) keep.add(state.draftCaptainPick);
+  if (state.draftStarPick) keep.add(state.draftStarPick);
   (state.freeAgents ?? []).forEach((id) => keep.add(id));
   state.conversations.forEach((c) => keep.add(c.playerId));
 

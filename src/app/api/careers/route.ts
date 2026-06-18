@@ -4,20 +4,18 @@ import { prisma } from "@/lib/db";
 import { requireUserId } from "@/lib/auth";
 import { createCareerState } from "@/lib/engine/career";
 import { deriveMeta } from "@/lib/career-service";
-import { NATIONS } from "@/data/nations";
-import { FLAGS } from "@/data/players";
+import { realNationOptions } from "@/data/countries";
 
 const createSchema = z.object({
   nationName: z.string().min(2).max(40),
   baseCountry: z.string().min(2).max(40),
+  flag: z.string().min(1).max(16).optional(),
   difficulty: z.enum(["easy", "normal", "hard", "realistic", "chaos"]),
 });
 
 function flagFor(country: string): string {
-  const nation = NATIONS.find((n) => n.name === country);
-  if (nation) return nation.flag;
-  const key = country.replace(/ /g, "_");
-  return FLAGS[key] ?? "🏳️";
+  const nation = realNationOptions().find((n) => n.name === country);
+  return nation?.flag ?? "🏳️";
 }
 
 // GET /api/careers — lista de carreras del usuario
@@ -53,11 +51,11 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
-  const { nationName, baseCountry, difficulty } = parsed.data;
+  const { nationName, baseCountry, flag, difficulty } = parsed.data;
   const state = createCareerState({
     nationName,
     baseCountry,
-    flag: flagFor(baseCountry),
+    flag: flag || flagFor(baseCountry),
     difficulty,
   });
   const meta = deriveMeta(state);

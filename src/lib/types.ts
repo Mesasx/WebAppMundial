@@ -156,6 +156,9 @@ export interface Player {
   attributes: PlayerAttributes;
   stats: PlayerStats;
 
+  // Equipo real de origen (para la "defección" al ficharlo en el draft).
+  originTeamId?: string;
+
   // Marcadores de partida
   isInjuredSeriously?: boolean;
 }
@@ -382,10 +385,18 @@ export interface CareerState {
   dressingRoom: number;      // confianza del vestuario 0-100
   coachReputation: number;   // reputación del seleccionador 0-100
 
-  // Draft en curso (sólo durante phase=draft)
-  draftPool?: string[];      // ids de jugadores disponibles para elegir
-  draftPicks?: string[];     // ids ya elegidos manualmente
-  draftPicksNeeded?: number; // cuántos faltan por elegir manualmente
+  // Draft en curso (sólo durante phase=draft). Nuevo formato:
+  //   - 3 opciones de capitán (media >=90): se elige 1
+  //   - varias opciones de estrella (media 85-89): se elige 1
+  //   - el resto (24) se autocompleta con jugadores de media 67-84
+  draftCaptainOptions?: string[];
+  draftStarOptions?: string[];
+  draftCaptainPick?: string | null;
+  draftStarPick?: string | null;
+  // (legacy, ya no se usa con el nuevo draft)
+  draftPool?: string[];
+  draftPicks?: string[];
+  draftPicksNeeded?: number;
 
   // Agentes libres convencibles durante el reclutamiento.
   freeAgents?: string[];

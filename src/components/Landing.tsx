@@ -125,7 +125,7 @@ function Nav({ loggedIn }: { loggedIn: boolean }) {
 export function Wordmark() {
   return (
     <Link href="/" className="font-display text-xl font-semibold tracking-tight flex items-center gap-1.5">
-      <span className="grid place-items-center h-7 w-7 rounded-lg bg-pitch-500 text-ink-900 text-sm">⚽</span>
+      <span className="grid place-items-center h-7 w-7 rounded-lg bg-pitch-500 text-white text-sm">⚽</span>
       Manager <span className="text-pitch-400 italic">Mundial</span>
     </Link>
   );
@@ -160,8 +160,8 @@ function FlagMarquee() {
           <span key={i} className="opacity-80 hover:opacity-100 transition">{f}</span>
         ))}
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#1a1916] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#1a1916] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-[#fdfbf7] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-[#fdfbf7] to-transparent" />
     </div>
   );
 }

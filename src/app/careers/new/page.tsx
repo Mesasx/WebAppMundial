@@ -3,8 +3,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { post } from "@/lib/client";
-import { NATIONS } from "@/data/nations";
+import { realNationOptions } from "@/data/countries";
 import { DIFFICULTY_INFO, NATION_NAME_IDEAS } from "@/lib/narrative";
+
+const NATIONS = realNationOptions();
 
 export default function NewCareerPage() {
   const router = useRouter();
@@ -24,6 +26,7 @@ export default function NewCareerPage() {
       const { id } = await post<{ id: string }>("/api/careers", {
         nationName: effectiveName,
         baseCountry,
+        flag: baseNation?.flag ?? "🏳️",
         difficulty,
       });
       router.push(`/play/${id}`);
@@ -35,7 +38,7 @@ export default function NewCareerPage() {
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
-      <Link href="/careers" className="text-sm text-slate-400 hover:text-white">← Mis carreras</Link>
+      <Link href="/careers" className="text-sm text-slate-400 hover:text-pitch-600">← Mis carreras</Link>
       <h1 className="text-3xl font-black mt-3 mb-1">Crea tu selección</h1>
       <p className="text-slate-400 mb-6">En este universo, tu selección nace de cero. Elige una base y ponle el nombre que quieras.</p>
 

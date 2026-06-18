@@ -31,7 +31,7 @@ export function Hub(props: GameProps) {
       <nav className="flex gap-1.5 overflow-x-auto pb-2 mb-4 -mx-1 px-1 sticky top-[57px] z-20">
         {TABS.map((t) => (
           <button key={t.id} onClick={() => setTab(t.id)}
-            className={`chip whitespace-nowrap px-3 py-1.5 ${tab === t.id ? "bg-pitch-500 text-ink-900" : "bg-ink-800 text-slate-300 hover:bg-ink-700"}`}>
+            className={`chip whitespace-nowrap px-3 py-1.5 ${tab === t.id ? "bg-pitch-500 text-white" : "bg-ink-800 text-slate-300 hover:bg-ink-700"}`}>
             {t.label}
           </button>
         ))}
@@ -81,7 +81,7 @@ function Squad({ state, act, busy }: GameProps) {
               <div className="flex flex-col gap-1 items-end">
                 {starters.has(p.id) && <span className="chip bg-pitch-500/20 text-pitch-400">XI</span>}
                 {user.captainId === p.id && <span className="chip bg-accent-gold/20 text-accent-gold">©</span>}
-                <button className="text-[10px] text-slate-400 hover:text-white" disabled={busy} onClick={() => act({ type: "setCaptain", playerId: p.id })}>capitán</button>
+                <button className="text-[10px] text-slate-400 hover:text-pitch-600" disabled={busy} onClick={() => act({ type: "setCaptain", playerId: p.id })}>capitán</button>
               </div>
             }
           />
@@ -116,7 +116,7 @@ function Tactics({ state, act, busy }: GameProps) {
         <div className="flex flex-wrap gap-1.5 mb-1">
           {ALL_FORMATIONS.map((f) => (
             <button key={f} disabled={busy} onClick={() => act({ type: "setFormation", formation: f })}
-              className={`chip ${user.formation === f ? "bg-pitch-500 text-ink-900" : "bg-ink-700 text-slate-300"}`}>{f}</button>
+              className={`chip ${user.formation === f ? "bg-pitch-500 text-white" : "bg-ink-700 text-slate-300"}`}>{f}</button>
           ))}
         </div>
         <p className="text-[11px] text-slate-500 mb-4">{FORMATION_LABELS[user.formation]}</p>
@@ -125,7 +125,7 @@ function Tactics({ state, act, busy }: GameProps) {
         <div className="flex flex-wrap gap-1.5">
           {(Object.keys(PLAYSTYLE_LABELS)).map((s) => (
             <button key={s} disabled={busy} onClick={() => act({ type: "setPlaystyle", playstyle: s as any })}
-              className={`chip ${user.playstyle === s ? "bg-pitch-500 text-ink-900" : "bg-ink-700 text-slate-300"}`}>{PLAYSTYLE_LABELS[s]}</button>
+              className={`chip ${user.playstyle === s ? "bg-pitch-500 text-white" : "bg-ink-700 text-slate-300"}`}>{PLAYSTYLE_LABELS[s]}</button>
           ))}
         </div>
 
