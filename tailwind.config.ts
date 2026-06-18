@@ -5,44 +5,69 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Acento principal: coral cálido de la identidad Claude.
         pitch: {
-          50: "#eafff2",
-          100: "#c8ffe0",
-          400: "#22e07a",
-          500: "#10b95f",
-          600: "#0a9c4e",
+          50: "#fdf4ef",
+          100: "#f9e1d5",
+          400: "#e89a7f",
+          500: "#d97757", // Claude coral
+          600: "#c4603f",
         },
+        // Superficies: grises cálidos oscuros (modo oscuro estilo Claude).
         ink: {
-          900: "#0a0e14",
-          800: "#111722",
-          700: "#1a2230",
-          600: "#27313f",
-          500: "#3a4658",
+          900: "#1a1916",
+          800: "#23211c",
+          700: "#2f2c26",
+          600: "#3d3933",
+          500: "#544f47",
         },
         accent: {
-          gold: "#ffce4b",
-          amber: "#ffa726",
-          neon: "#22e07a",
-          danger: "#ff5d5d",
-          info: "#4aa8ff",
+          gold: "#e3ab5e",
+          amber: "#e0934e",
+          neon: "#d97757",
+          danger: "#e0654f",
+          info: "#8fb3cf",
+          coral: "#d97757",
+          cream: "#efe9dd",
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        sans: ["var(--font-body)", "system-ui", "sans-serif"],
       },
       keyframes: {
         "fade-in": {
-          "0%": { opacity: "0", transform: "translateY(8px)" },
+          "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
-        "pop": {
+        pop: {
           "0%": { transform: "scale(0.92)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" },
         },
+        float: {
+          "0%,100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-14px)" },
+        },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
+        glow: {
+          "0%,100%": { opacity: "0.35", transform: "scale(1)" },
+          "50%": { opacity: "0.6", transform: "scale(1.08)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
-        "fade-in": "fade-in 0.4s ease-out",
-        "pop": "pop 0.25s ease-out",
+        "fade-in": "fade-in 0.5s ease-out",
+        pop: "pop 0.25s ease-out",
+        float: "float 6s ease-in-out infinite",
+        marquee: "marquee 30s linear infinite",
+        glow: "glow 7s ease-in-out infinite",
+        shimmer: "shimmer 2.5s linear infinite",
       },
     },
   },

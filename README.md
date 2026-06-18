@@ -17,37 +17,27 @@ Mezcla de modo carrera, simulador de Mundial, juego de draft y narrativa interac
 
 ## 🚀 Cómo ejecutar en local
 
-Requisitos: **Node 18+** (probado con Node 22) y un **PostgreSQL**. La forma más rápida de
-tener Postgres en local es con Docker (incluido `docker-compose.yml`).
+Requisitos: **Node 18+** (probado con Node 22). La base de datos es **SQLite**, así que no
+necesitas instalar ni configurar nada externo.
 
 ```bash
 # 1. Instalar dependencias (genera el cliente Prisma automáticamente)
 npm install
 
-# 2. Configurar entorno (apunta a Postgres; ver .env.example)
+# 2. Configurar entorno (SQLite, listo para usar)
 cp .env.example .env
 
-# 3. Levantar Postgres en local (o usa tu propia instancia / un Neon gratis)
-docker compose up -d
-
-# 4. Crear las tablas
+# 3. Crear la base de datos
 npm run db:push
 
-# 5. (Opcional) crear una cuenta demo  ->  demo@mundial.com / demo1234
+# 4. (Opcional) crear una cuenta demo  ->  demo@mundial.com / demo1234
 npm run db:seed
 
-# 6. Arrancar en desarrollo
+# 5. Arrancar en desarrollo
 npm run dev
 ```
 
 Abre **http://localhost:3000**.
-
-> ¿Sin Docker? Crea una base de datos gratis en [Neon](https://neon.tech) y pega su
-> connection string en `DATABASE_URL` y `DIRECT_URL` del `.env`.
-
-### ☁️ Desplegar en Vercel
-
-Sigue la guía paso a paso en **[DEPLOY.md](./DEPLOY.md)** (Vercel + Vercel Postgres/Neon).
 
 Otros scripts:
 
@@ -64,9 +54,9 @@ npm run db:reset   # recrear la BD desde cero + seed
 
 | Capa | Tecnología | Por qué |
 |------|-----------|---------|
-| Framework | **Next.js 14 (App Router)** + React 18 + TypeScript | Full-stack en un solo proyecto, fácil de desplegar (Vercel/Node) |
-| Estilos | **Tailwind CSS** | UI rápida, responsive, tema oscuro futbolero |
-| Base de datos | **Prisma + PostgreSQL** | Estándar y listo para serverless/Vercel (Vercel Postgres, Neon, Supabase…) |
+| Framework | **Next.js 14 (App Router)** + React 18 + TypeScript | Full-stack en un solo proyecto |
+| Estilos | **Tailwind CSS** + tipografía serif/sans | Identidad cálida estilo Claude, responsive |
+| Base de datos | **Prisma + SQLite** | Cero configuración; portable a Postgres cambiando el `datasource` |
 | Auth | **bcryptjs + JWT (jose)** en cookie httpOnly | Sesión segura sin dependencias pesadas |
 | Validación | **Zod** | Validación de formularios y de la API |
 | Tests | **Vitest** | Motor de juego testeable y desacoplado |
@@ -173,7 +163,7 @@ La arquitectura deja enganches claros para crecer:
   el motor ya soporta sesgo táctico/actitud; falta el bucle interactivo de subs.
 - **Mercado dinámico más profundo**, rivalidades, ruedas de prensa ampliadas, más estadísticas
   globales y modos de carrera adicionales.
-- **Despliegue**: listo para Vercel con Postgres gestionado (ver `DEPLOY.md`).
+- **Despliegue**: para producción basta con cambiar el `datasource` de Prisma a Postgres.
 
 ---
 

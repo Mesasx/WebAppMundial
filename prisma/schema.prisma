@@ -18,13 +18,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  // URL "pooled" (con PgBouncer) que usa la app en runtime.
-  url       = env("DATABASE_URL")
-  // Conexión directa (sin pooler) que usan `prisma db push` / migraciones.
-  // En Vercel Postgres (Neon): DATABASE_URL = POSTGRES_PRISMA_URL,
-  // DIRECT_URL = POSTGRES_URL_NON_POOLING. En local pueden ser la misma.
-  directUrl = env("DIRECT_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model User {
